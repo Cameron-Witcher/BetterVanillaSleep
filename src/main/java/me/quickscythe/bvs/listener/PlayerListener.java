@@ -20,17 +20,13 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerSleep(PlayerBedEnterEvent e) {
 		Bukkit.getScheduler().runTaskLater(Utils.getPlugin(), () -> {
-
 			double percent = Utils.getSleepingPercent(e.getPlayer().getWorld());
 			Bukkit.broadcastMessage(Utils.colorize("&6" + e.getPlayer().getName() + "&e is sleeping."));
-			for (Player player : e.getPlayer().getWorld().getPlayers()) {
+			for (Player player : e.getPlayer().getWorld().getPlayers())
 				player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
 						Utils.colorize("&6" + ((int) (percent * 100)) + "%&e of players are sleeping.")));
-			}
-			if (percent >= 0.33) {
+			if (percent >= Utils.getRequiredPercent())
 				Utils.skipToDayTimer(e.getPlayer().getWorld());
-			}
-
 		}, 0);
 	}
 

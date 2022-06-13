@@ -14,9 +14,16 @@ public class Utils {
 	private static Main plugin;
 	private static Essentials ess = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 	static boolean skipping = false;
+	private static double requiredSleeping = 0.33;
 
 	public static void init(Main main) {
 		plugin = main;
+		if (plugin.getConfig().isSet("PlayersSleepingPercentage"))
+			requiredSleeping = plugin.getConfig().getDouble("PlayersSleepingPercentage");
+		else {
+			plugin.getConfig().set("PlayersSleepingPercentage", requiredSleeping);
+			plugin.saveConfig();
+		}
 	}
 
 	public static Main getPlugin() {
@@ -25,6 +32,10 @@ public class Utils {
 
 	public static Essentials getEssentials() {
 		return ess;
+	}
+	
+	public static double getRequiredPercent() {
+		return requiredSleeping;
 	}
 
 	public static double getSleepingPercent(World world) {
@@ -46,7 +57,7 @@ public class Utils {
 		}
 		Bukkit.getScheduler().runTaskLater(Utils.getPlugin(), () -> {
 			skipping = false;
-			if (getSleepingPercent(world) >= 0.33)
+			if (getSleepingPercent(world) >= getRequiredPercent())
 				world.setTime(0);
 
 		}, 5 * 20);
